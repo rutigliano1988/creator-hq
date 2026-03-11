@@ -24,9 +24,10 @@ export default function AppShell({
     const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
     const [isIdeaModalOpen, setIsIdeaModalOpen] = useState(false);
 
-    const { addTask, addIdea } = useAppState();
+    const { addTask, addIdea, channels } = useAppState();
     const [taskText, setTaskText] = useState("");
     const [ideaTitle, setIdeaTitle] = useState("");
+    const [ideaChannelId, setIdeaChannelId] = useState("s1");
 
   return (
     <div className="flex">
@@ -147,12 +148,25 @@ export default function AppShell({
                     value={ideaTitle}
                     onChange={(e) => setIdeaTitle(e.target.value)}
                 />
+                <label className="block text-sm text-white/70">Canal</label>
+                <select
+                  className="w-full rounded-xl border border-white/10 bg-black/20 p-3 text-sm outline-none focus:border-white/20"
+                  value={ideaChannelId}
+                  onChange={(e) => setIdeaChannelId(e.target.value)}
+                >
+                  {channels.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
                 <button 
                 className="w-full rounded-xl bg-emerald-500 p-3 text-sm font-medium text-black hover:opacity-90"
                 onClick={() => {
-                    addIdea(ideaTitle);
-                    setIdeaTitle("");
-                    setIsIdeaModalOpen(false);
+                  addIdea(ideaTitle, ideaChannelId);
+                  setIdeaTitle("");
+                  setIdeaChannelId("s1");
+                  setIsIdeaModalOpen(false);
                 }}
                 >
                     Guardar

@@ -5,18 +5,21 @@ import {
   channels as initialChannels,
   upcomingPublications as initialUpcoming,
   urgentTasks as initialTasks,
+  initialIdeas,
   type Channel,
   type Publication,
   type Task,
+  type Idea,
 } from "@/lib/mockData";
 
 type AppState = {
   channels: Channel[];
   upcomingPublications: Publication[];
   urgentTasks: Task[];
+  ideas: Idea[];
   addTask: (text: string) => void;
-  addIdea: (title: string) => void; // por ahora solo incrementa contador
-  savedIdeasCount: number;
+  addIdea: (title: string, channelId: string) => void;
+  moveIdea: (id: string, status: Idea["status"]) => void;
 };
 
 const AppStateContext = createContext<AppState | null>(null);
@@ -25,7 +28,7 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
   const [channels] = useState<Channel[]>(initialChannels);
   const [upcomingPublications] = useState<Publication[]>(initialUpcoming);
   const [urgentTasks, setUrgentTasks] = useState<Task[]>(initialTasks);
-  const [savedIdeasCount, setSavedIdeasCount] = useState<number>(8);
+  const [ideas, setIdeas] = useState<Idea[]>(initialIdeas);
 
   const addTask = (text: string) => {
     const trimmed = text.trim();
@@ -41,12 +44,23 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
     setUrgentTasks((prev) => [newTask, ...prev]);
   };
 
-  const addIdea = (title: string) => {
+  const addIdea = (title: string, channelId: string) => {
     const trimmed = title.trim();
     if (!trimmed) return;
-    // De momento: solo actualizamos el contador.
-    // En el siguiente paso crearemos una lista real de ideas.
-    setSavedIdeasCount((n) => n + 1);
+
+    const newIdea: Idea = {
+      id: `i_${Date.now()}`,
+      title: trimmed,
+      channelId: channelId || "s1",
+      status: "SAVED",
+      createdAt: Date.now(),
+    };
+
+    setIdeas((prev) => [newIdea, ...prev]);
+  };
+
+  const moveIdea = (id: string, status: Idea["status"]) => {
+    setIdeas((prev) => prev.map((idea) => (idea.id === id ? { ...idea, status } : idea)));
   };
 
   const value = useMemo(
@@ -54,11 +68,12 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
       channels,
       upcomingPublications,
       urgentTasks,
+      ideas,
       addTask,
       addIdea,
-      savedIdeasCount,
+      moveIdea,
     }),
-    [channels, upcomingPublications, urgentTasks, savedIdeasCount]
+    [channels, upcomingPublications, urgentTasks, ideas]
   );
 
   return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;

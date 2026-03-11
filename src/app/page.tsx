@@ -5,19 +5,23 @@ import { useAppState } from "@/components/AppState";
 import { channelName as channelNameFromMock } from "@/lib/mockData";
 
 export default function Home() {
-  const { urgentTasks, upcomingPublications, savedIdeasCount } = useAppState();
+  const { urgentTasks, upcomingPublications, ideas } = useAppState();
+
+  const savedIdeasCount = ideas.filter((i) => i.status === "SAVED").length;
+  const inProductionCount = ideas.filter((i) => i.status === "IN_PRODUCTION").length;
+
+  const nextPublicationLabel =
+  upcomingPublications.length > 0
+    ? `${upcomingPublications[0].dayLabel} · ${upcomingPublications[0].timeLabel}`
+    : "Pendiente";
 
   return (
     <AppShell title="Dashboard">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
         <StatCard title="Videos Publicados" value="0" subtitle="Total en los 3 canales" />
-        <StatCard title="En Producción" value="5" subtitle="Esta semana" />
-        <StatCard
-          title="Ideas Guardadas"
-          value={String(savedIdeasCount)}
-          subtitle="Sin producir aún"
-        />
-        <StatCard title="Próxima Publicación" value="—" subtitle="Pendiente" />
+        <StatCard title="En Producción" value={String(inProductionCount)} subtitle="Esta semana" />
+        <StatCard title="Ideas Guardadas" value={String(savedIdeasCount)} subtitle="Sin producir aún" />
+        <StatCard title="Próxima Publicación" value="—" subtitle={nextPublicationLabel} />
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">

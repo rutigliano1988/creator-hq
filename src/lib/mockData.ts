@@ -20,6 +20,14 @@ export type Task = {
   done?: boolean;
 };
 
+export type Idea = {
+  id: string;
+  title: string;
+  channelId: string; // por ahora lo dejamos fijo en "s1"
+  status: "SAVED" | "SCRIPT_READY" | "IN_PRODUCTION" | "PUBLISHED";
+  createdAt: number;
+};
+
 export const channels: Channel[] = [
   { id: "s1", name: "Serenidad Profunda", badge: "S1" },
   { id: "s2", name: "Arte de Vivir Mejor", badge: "S2" },
@@ -63,3 +71,20 @@ export function getDashboardStats() {
 export function channelName(channelId: string) {
   return channels.find((c) => c.id === channelId)?.name ?? "Canal";
 }
+
+export const initialIdeas: Idea[] = [
+  {
+    id: "i1",
+    title: "Frecuencia 432Hz: Relajación 1H",
+    channelId: "s1",
+    status: "SAVED",
+    createdAt: Date.now() - 1000 * 60 * 60 * 24,
+  },
+  {
+    id: "i2",
+    title: 'Short: "Sufro por cosas que nunca pasan"',
+    channelId: "s2",
+    status: "SCRIPT_READY",
+    createdAt: Date.now() - 1000 * 60 * 60 * 8,
+  },
+];
